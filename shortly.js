@@ -25,7 +25,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', 
 function(req, res) {
-  res.render('index');
+  res.render('login');
 });
 
 app.get('/create', 

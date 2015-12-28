@@ -63,7 +63,7 @@ describe('', function() {
 
     var requestWithSession = request.defaults({jar: true});
 
-    xbeforeEach(function(done){
+    beforeEach(function(done){
       // create a user that we can then log-in with
       new User({
           'username': 'Phillip',
@@ -154,7 +154,7 @@ describe('', function() {
 
       var link;
 
-      beforeEach(function(done){
+      xbeforeEach(function(done){
         // save a link to the database
         link = new Link({
           url: 'http://roflzoo.com/',
@@ -213,7 +213,7 @@ describe('', function() {
 
   }); // 'Link creation'
 
-  xdescribe('Privileged Access:', function(){
+  describe('Privileged Access:', function(){
 
     it('Redirects to login page if a user tries to access the main page and is not signed in', function(done) {
       request('http://127.0.0.1:4568/', function(error, res, body) {
