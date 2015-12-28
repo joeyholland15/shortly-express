@@ -38,10 +38,12 @@ app.post('/login', function(request, response) {
   if(username == 'demo' && password == 'demo'){
       request.session.regenerate(function(){
       request.session.user = username;
+      // redirect to link create views
       response.redirect('/restricted');
       });
   }
   else {
+    //retry to login
      res.redirect('login');
   }    
 });
