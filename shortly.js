@@ -25,8 +25,42 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', 
 function(req, res) {
+  //Check if logged in 
   res.render('login');
+  //else
+    //redirect to login
 });
+
+app.post('/login', function(request, response) {
+  var username = request.body.username;
+  var password = request.body.password;
+
+  if(username == 'demo' && password == 'demo'){
+      request.session.regenerate(function(){
+      request.session.user = username;
+      response.redirect('/restricted');
+      });
+  }
+  else {
+     res.redirect('login');
+  }    
+});
+
+// app.post('/login', function(request, response) {
+ 
+//     var username = request.body.username;
+//     var password = request.body.password;
+ 
+//     if(username == 'demo' && password == 'demo'){
+//         request.session.regenerate(function(){
+//         request.session.user = username;
+//         response.redirect('/restricted');
+//         });
+//     }
+//     else {
+//        res.redirect('login');
+//     }    
+// });
 
 app.get('/create', 
 function(req, res) {
