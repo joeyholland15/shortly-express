@@ -7,8 +7,18 @@ var Promise = require('bluebird');
 
 
 var User = db.Model.extend({
-  //username: ""
-  //password: 
+  tableName: 'users',
+  defaults: {
+    username: "",
+    password: ""
+  },
+
+  initialize: function() {
+    this.on('creating', function(model, attrs, options) {
+      //want to create a hash and update model password
+      //with hash. 
+    }); 
+  }
 });
 
 module.exports = User;

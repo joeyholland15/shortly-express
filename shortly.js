@@ -33,9 +33,26 @@ function(req, res) {
 
 app.post('/login', function(request, response) {
   var username = request.body.username;
-  var password = request.body.password;
+  var password = request.body.password; 
 
-  if(username == 'demo' && password == 'demo'){
+  // read operation new User based on username
+  new User ({username: username})
+  //check if username exits
+    // if not redirect to sign-up
+    .fetch()
+    //async success
+    .then(function(user){
+      if (model.get('password')===password){
+        //let them do stuff
+      } else {
+        //redirect to login
+      }
+
+    });
+    // ^__ returns an object that contains password 
+    //model.get ('password')
+  
+  if (username == 'demo' && password == 'demo'){
       request.session.regenerate(function(){
       request.session.user = username;
       // redirect to link create views
