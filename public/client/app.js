@@ -29,6 +29,7 @@ window.Shortly = Backbone.View.extend({
   renderCreateView: function(e){
     e && e.preventDefault();
     this.router.navigate('/create', { trigger: true });
+    //maybe include session functionality?
   },
 
   updateNav: function(routeName){

@@ -19,6 +19,7 @@ Shortly.Router = Backbone.Router.extend({
   },
 
   create: function(){
+    //check sessh
     this.swapView(new Shortly.createLinkView());
   }, 
  

@@ -2,6 +2,7 @@ var express = require('express');
 var util = require('./lib/utility');
 var partials = require('express-partials');
 var bodyParser = require('body-parser');
+var session = require("express-session");
 
 
 var db = require('./app/config');
@@ -16,6 +17,7 @@ var app = express();
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(partials());
+app.use(session({secret: "somesecret"}));
 // Parse JSON (uniform resource locators)
 app.use(bodyParser.json());
 // Parse forms (signup/login)
@@ -26,14 +28,18 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', 
 function(req, res) {
   //Check if logged in 
-  res.render('login');
+  res.render('index');
   //else
     //redirect to login
 });
 
 app.get('/create', 
 function(req, res) {
-  res.render('index');
+  if ( req.session.user ) {
+    res.render('create');
+  } else {
+    res.render('login'); 
+  }
 });
 
 app.get('/links', 
@@ -51,47 +57,63 @@ function(req, res) {
 
 
 app.post('/login', function(request, response) {
+  //upon login post want to create a session
+  //
   var username = request.body.username;
   var password = request.body.password; 
-
+  // var userExists = false;
   // read operation new User based on username
   new User ({username: username})
   //check if username exits
-    // if not redirect to sign-up
     .fetch()
     //async success
     .then(function(user){
-      if (model.get('password')===password){
-        //let them do stuff
+      // userExists = true;
+      if (user.get('password') === password){
+        //set up sessions data
+        request.session.user = username;
+        response.render('index');
       } else {
         //redirect to login
+        response.render('login');
       }
-
-    });
+    })
+    .catch(function(err) {
+      // if (!userExists) {
+        // if not redirect to sign-up
+        response.render('signup');
+    }); 
     // ^__ returns an object that contains password 
     //model.get ('password')
   
-  if (username == 'demo' && password == 'demo'){
-      request.session.regenerate(function(){
-      request.session.user = username;
-      // redirect to link create views
-      response.redirect('/restricted');
-      });
-  }
-  else {
-    //retry to login
-     res.redirect('login');
-  }    
+
+
+
+
+
+
+  // if (username == 'demo' && password == 'demo'){
+  //     request.session.regenerate(function(){
+  //     request.session.user = username;
+  //     // redirect to link create views
+  //     response.redirect('/restricted');
+  //     });
+  // }
+  // else {
+  //   //retry to login
+  //    response.redirect('login');
+  // }    
 });
 
 app.post('/signup', function(request, response) {
   var username = request.body.username;
   var password = request.body.password; 
-  
+
   new User ({username: username, password: password})
     .save()
     .then(function(user){
       console.log("Logged: ", user);
+      response.redirect('login'); 
     });
   
 });
