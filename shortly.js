@@ -31,6 +31,25 @@ function(req, res) {
     //redirect to login
 });
 
+app.get('/create', 
+function(req, res) {
+  res.render('index');
+});
+
+app.get('/links', 
+function(req, res) {
+  Links.reset().fetch().then(function(links) {
+    res.send(200, links.models);
+  });
+});
+
+app.get('/signup', 
+function(req, res) {
+  res.render('signup');
+});
+
+
+
 app.post('/login', function(request, response) {
   var username = request.body.username;
   var password = request.body.password; 
@@ -65,33 +84,19 @@ app.post('/login', function(request, response) {
   }    
 });
 
-// app.post('/login', function(request, response) {
- 
-//     var username = request.body.username;
-//     var password = request.body.password;
- 
-//     if(username == 'demo' && password == 'demo'){
-//         request.session.regenerate(function(){
-//         request.session.user = username;
-//         response.redirect('/restricted');
-//         });
-//     }
-//     else {
-//        res.redirect('login');
-//     }    
-// });
-
-app.get('/create', 
-function(req, res) {
-  res.render('index');
+app.post('/signup', function(request, response) {
+  var username = request.body.username;
+  var password = request.body.password; 
+  
+  new User ({username: username, password: password})
+    .save()
+    .then(function(user){
+      console.log("Logged: ", user);
+    });
+  
 });
 
-app.get('/links', 
-function(req, res) {
-  Links.reset().fetch().then(function(links) {
-    res.send(200, links.models);
-  });
-});
+
 
 app.post('/links', 
 function(req, res) {

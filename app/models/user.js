@@ -13,12 +13,13 @@ var User = db.Model.extend({
     password: ""
   },
 
-  initialize: function() {
-    this.on('creating', function(model, attrs, options) {
-      //want to create a hash and update model password
-      //with hash. 
-    }); 
-  }
+  // initialize: function() {
+  //   this.on('creating', function(model, attrs, options) {
+  //     //want to create a hash and update model password
+  //     //with hash. 
+  //   }); 
+  // }
 });
 
 module.exports = User;
+
