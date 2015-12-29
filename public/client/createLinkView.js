@@ -14,12 +14,16 @@ Shortly.createLinkView = Backbone.View.extend({
 
   shortenUrl: function(e) {
     e.preventDefault();
+    //variable form is input bar
     var $form = this.$el.find('form .text');
+    //instantiates a new link model, setting its url to the input
     var link = new Shortly.Link({ url: $form.val() })
+
     link.on('request', this.startSpinner, this);
     link.on('sync', this.success, this);
     link.on('error', this.failure, this);
-    link.save({});
+    link.save();
+    //clears form
     $form.val('');
   },
 

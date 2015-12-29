@@ -24,25 +24,25 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 
-
-app.get('/', 
-function(req, res) {
-  //Check if logged in 
-  res.render('index');
-  //else
-    //redirect to login
-});
-
-app.get('/create', 
-function(req, res) {
-  if ( req.session.user ) {
-    res.render('create');
+var checkUser = function(request, response, next) {
+  if(request.session.user) {
+    next(); 
   } else {
-    res.render('login'); 
+    response.redirect('/login'); 
   }
+};
+
+app.get('/', checkUser, 
+function(req, res) {
+  res.render('index');
 });
 
-app.get('/links', 
+app.get('/create', checkUser, 
+function(req, res){  
+  res.render('create');
+});
+
+app.get('/links', checkUser, 
 function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.send(200, links.models);
@@ -55,6 +55,18 @@ function(req, res) {
 });
 
 
+app.get('/login', function(req, res) {
+  res.render('login'); 
+}); 
+
+// function restrict(req, res, next) {
+//   if (req.session.user) {
+//     next();
+//   } else {
+//     req.session.error = 'Access denied!';
+//     res.redirect('/login');
+//   }
+// }
 
 app.post('/login', function(request, response) {
   //upon login post want to create a session
@@ -72,16 +84,16 @@ app.post('/login', function(request, response) {
       if (user.get('password') === password){
         //set up sessions data
         request.session.user = username;
-        response.render('index');
+        response.redirect('/');
       } else {
         //redirect to login
-        response.render('login');
+        response.redirect('/login');
       }
     })
     .catch(function(err) {
       // if (!userExists) {
         // if not redirect to sign-up
-        response.render('signup');
+        response.redirect('/login');
     }); 
     // ^__ returns an object that contains password 
     //model.get ('password')
@@ -113,7 +125,9 @@ app.post('/signup', function(request, response) {
     .save()
     .then(function(user){
       console.log("Logged: ", user);
-      response.redirect('login'); 
+      request.session.user = username;
+      response.redirect('/');
+      //response.redirect('login'); 
     });
   
 });
