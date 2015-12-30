@@ -4,6 +4,7 @@ window.Shortly = Backbone.View.extend({
   events: {
     'click li a.index':  'renderIndexView',
     'click li a.create': 'renderCreateView'
+    // 'click li a.logout': 'logout'
   },
 
   initialize: function(){
@@ -31,6 +32,10 @@ window.Shortly = Backbone.View.extend({
     this.router.navigate('/create', { trigger: true });
     //maybe include session functionality?
   },
+
+  // logout: function(e){
+
+  // },
 
   updateNav: function(routeName){
     this.$el.find('.navigation li a')

@@ -32,6 +32,7 @@ var checkUser = function(request, response, next) {
   }
 };
 
+//this line makes it false
 app.get('/', checkUser, 
 function(req, res) {
   res.render('index');
@@ -39,6 +40,7 @@ function(req, res) {
 
 app.get('/create', checkUser, 
 function(req, res){  
+  console.log("CREATED");
   res.render('create');
 });
 
@@ -57,6 +59,8 @@ function(req, res) {
 
 app.get('/login', function(req, res) {
   res.render('login'); 
+  // console.log("Definitely sended request");
+  // req.session.user = false; 
 }); 
 
 // function restrict(req, res, next) {
@@ -67,6 +71,12 @@ app.get('/login', function(req, res) {
 //     res.redirect('/login');
 //   }
 // }
+
+app.get('/logout', function( req, res ) {
+  req.session.destroy(function() {
+    res.redirect('/'); 
+  }); 
+}); 
 
 app.post('/login', function(request, response) {
   //upon login post want to create a session
