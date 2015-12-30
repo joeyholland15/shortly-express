@@ -11,6 +11,7 @@ var User = require('./app/models/user');
 var Links = require('./app/collections/links');
 var Link = require('./app/models/link');
 var Click = require('./app/models/click');
+// var bcrypt = require('bcrypt-nodejs');
 
 var app = express();
 
@@ -59,18 +60,8 @@ function(req, res) {
 
 app.get('/login', function(req, res) {
   res.render('login'); 
-  // console.log("Definitely sended request");
-  // req.session.user = false; 
 }); 
 
-// function restrict(req, res, next) {
-//   if (req.session.user) {
-//     next();
-//   } else {
-//     req.session.error = 'Access denied!';
-//     res.redirect('/login');
-//   }
-// }
 
 app.get('/logout', function( req, res ) {
   req.session.destroy(function() {
@@ -79,52 +70,28 @@ app.get('/logout', function( req, res ) {
 }); 
 
 app.post('/login', function(request, response) {
-  //upon login post want to create a session
-  //
+  console.log("Posting to Login");
   var username = request.body.username;
   var password = request.body.password; 
-  // var userExists = false;
-  // read operation new User based on username
   new User ({username: username})
-  //check if username exits
     .fetch()
-    //async success
     .then(function(user){
-      // userExists = true;
-      if (user.get('password') === password){
-        //set up sessions data
+      var hash = bcrypt.hashSync(password, user.get('salt'));
+      // console.log('THESE SHOULD BE THE SAME, :', hash, user.get('password'));
+      if (user.get('password') === hash){
+        // console.log("Password Matches Hash");
         request.session.user = username;
         response.redirect('/');
       } else {
-        //redirect to login
+        // console.log("Password doesn't Match");
         response.redirect('/login');
       }
     })
     .catch(function(err) {
-      // if (!userExists) {
-        // if not redirect to sign-up
-        response.redirect('/login');
+      console.log("Username doesn't exist");
+      response.redirect('/login');
     }); 
-    // ^__ returns an object that contains password 
-    //model.get ('password')
-  
 
-
-
-
-
-
-  // if (username == 'demo' && password == 'demo'){
-  //     request.session.regenerate(function(){
-  //     request.session.user = username;
-  //     // redirect to link create views
-  //     response.redirect('/restricted');
-  //     });
-  // }
-  // else {
-  //   //retry to login
-  //    response.redirect('login');
-  // }    
 });
 
 app.post('/signup', function(request, response) {
@@ -137,7 +104,6 @@ app.post('/signup', function(request, response) {
       console.log("Logged: ", user);
       request.session.user = username;
       response.redirect('/');
-      //response.redirect('login'); 
     });
   
 });
